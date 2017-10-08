@@ -1,4 +1,4 @@
-module View exposing (..)
+module View exposing (view)
 
 import Html
 import Html.Attributes

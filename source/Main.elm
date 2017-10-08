@@ -1,6 +1,5 @@
-module App exposing (..)
+module App exposing (main)
 
-import Html exposing (Html, div, program, text)
 import Model
 import Subscriptions
 import Task

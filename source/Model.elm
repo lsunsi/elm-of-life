@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Model exposing (Dot(Alive, Dead), Model, init, neighbors)
 
 import Matrix
 import Maybe
