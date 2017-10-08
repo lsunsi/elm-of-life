@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import Matrix
 import Model
 
 
@@ -20,32 +21,32 @@ update msg model =
             ( Model.init 50 width height, Cmd.none )
 
         Spawn row col ->
-            ( Model.spawn row col model, Cmd.none )
+            ( spawn row col model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
 
 
+spawn : Int -> Int -> Model.Model -> Model.Model
+spawn row col model =
+    { model | dots = Matrix.set ( row, col ) Model.Alive model.dots }
+
+
 tick : Model.Model -> Model.Model
-tick board =
-    Model.map
-        (\dot row col ->
-            let
-                neighbors =
-                    Model.neighbors row col board
+tick model =
+    { model
+        | dots =
+            Matrix.mapWithLocation
+                (\( row, col ) dot ->
+                    case ( dot, Model.neighbors row col model.dots ) of
+                        ( Model.Alive, 2 ) ->
+                            Model.Alive
 
-                alives =
-                    List.filter (\d -> d == Model.Alive) neighbors
-                        |> List.length
-            in
-            case ( dot, alives ) of
-                ( Model.Alive, 2 ) ->
-                    Model.Alive
+                        ( _, 3 ) ->
+                            Model.Alive
 
-                ( _, 3 ) ->
-                    Model.Alive
-
-                _ ->
-                    Model.Dead
-        )
-        board
+                        _ ->
+                            Model.Dead
+                )
+                model.dots
+    }

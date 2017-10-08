@@ -2,6 +2,7 @@ module View exposing (..)
 
 import Html
 import Html.Attributes
+import Matrix
 import Model
 import Svg
 import Svg.Attributes
@@ -20,11 +21,11 @@ view board =
             ]
         ]
         [ Svg.svg
-            [ Svg.Attributes.width (toString (board.edge * board.cols))
-            , Svg.Attributes.height (toString (board.edge * board.rows))
+            [ Svg.Attributes.width (toString (board.edge * Matrix.colCount board.dots))
+            , Svg.Attributes.height (toString (board.edge * Matrix.rowCount board.dots))
             ]
-            (Model.mapOut
-                (\dot row col ->
+            (Matrix.mapWithLocation
+                (\( row, col ) dot ->
                     Svg.rect
                         [ Svg.Events.onMouseOver (Update.Spawn row col)
                         , Svg.Attributes.x (toString (board.edge * col))
@@ -42,6 +43,7 @@ view board =
                         ]
                         [ Svg.text (toString dot) ]
                 )
-                board
+                board.dots
+                |> Matrix.flatten
             )
         ]
