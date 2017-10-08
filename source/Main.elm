@@ -1,5 +1,6 @@
 module App exposing (main)
 
+import Html
 import Model
 import Subscriptions
 import Task
@@ -23,7 +24,7 @@ init =
 
 main : Program Never Model.Model Update.Msg
 main =
-    program
+    Html.program
         { init = init
         , view = View.view
         , update = Update.update

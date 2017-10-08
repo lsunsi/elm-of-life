@@ -1,4 +1,4 @@
-module Update exposing (Msg(Resize, Tick), update)
+module Update exposing (Msg(Resize, Spawn, Tick), update)
 
 import Matrix
 import Model
