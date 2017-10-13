@@ -6,5 +6,8 @@ import Update
 
 
 subscriptions : Model.Model -> Sub Update.Msg
-subscriptions _ =
-    Time.every Time.second (\_ -> Update.Tick)
+subscriptions state =
+    if state.active then
+        Time.every Time.second (\_ -> Update.Tick)
+    else
+        Sub.none

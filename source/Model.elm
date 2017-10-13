@@ -10,14 +10,15 @@ type Dot
 
 
 type alias Model =
-    { edge : Int
+    { active : Bool
+    , edge : Int
     , dots : Matrix.Matrix Dot
     }
 
 
 init : Int -> Int -> Int -> Model
 init edge width height =
-    Model edge
+    Model True edge
         (Matrix.matrix
             (height // edge)
             (width // edge)
