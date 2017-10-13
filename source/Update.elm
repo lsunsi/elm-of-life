@@ -1,4 +1,4 @@
-module Update exposing (Msg(Resize, Spawn, Tick, ToggleActive), update)
+module Update exposing (Msg(Reset, Resize, Spawn, Tick, ToggleActive), update)
 
 import Matrix
 import Model
@@ -8,6 +8,7 @@ type Msg
     = Resize Int Int
     | Spawn Int Int
     | ToggleActive
+    | Reset
     | Tick
     | NoOp
 
@@ -27,8 +28,16 @@ update msg model =
         ToggleActive ->
             ( toggleActive model, Cmd.none )
 
+        Reset ->
+            ( reset model, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
+
+
+reset : Model.Model -> Model.Model
+reset model =
+    { model | dots = Matrix.map (always Model.Dead) model.dots }
 
 
 toggleActive : Model.Model -> Model.Model

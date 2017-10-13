@@ -24,8 +24,7 @@ view board =
         ]
         [ Html.div []
             [ Html.button
-                [ Html.Events.onClick Update.ToggleActive
-                ]
+                [ Html.Events.onClick Update.ToggleActive ]
                 [ Html.text
                     (if board.active then
                         "Pause"
@@ -33,6 +32,9 @@ view board =
                         "Play"
                     )
                 ]
+            , Html.button
+                [ Html.Events.onClick Update.Reset ]
+                [ Html.text "Reset" ]
             ]
         , Svg.svg
             [ Svg.Attributes.width (toString (board.edge * Matrix.colCount board.dots))

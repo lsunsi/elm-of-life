@@ -18,7 +18,8 @@ type alias Model =
 
 init : Int -> Int -> Int -> Model
 init edge width height =
-    Model True edge
+    Model True
+        edge
         (Matrix.matrix
             (height // edge)
             (width // edge)
