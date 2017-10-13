@@ -1,4 +1,4 @@
-module Update exposing (Msg(Reset, Resize, Spawn, Tick, ToggleActive), update)
+module Update exposing (Msg(DotClick, DotHover, Reset, Resize, Tick, ToggleActive, ToggleSpawn), update)
 
 import Matrix
 import Model
@@ -6,8 +6,10 @@ import Model
 
 type Msg
     = Resize Int Int
-    | Spawn Int Int
+    | DotClick Int Int
+    | DotHover Int Int
     | ToggleActive
+    | ToggleSpawn
     | Reset
     | Tick
     | NoOp
@@ -22,8 +24,24 @@ update msg model =
         Resize width height ->
             ( Model.init 50 width height, Cmd.none )
 
-        Spawn row col ->
-            ( spawn row col model, Cmd.none )
+        DotClick row col ->
+            ( if model.spawn == Model.Touch then
+                spawn row col model
+              else
+                model
+            , Cmd.none
+            )
+
+        DotHover row col ->
+            ( if model.spawn == Model.Swipe then
+                spawn row col model
+              else
+                model
+            , Cmd.none
+            )
+
+        ToggleSpawn ->
+            ( toggleSpawn model, Cmd.none )
 
         ToggleActive ->
             ( toggleActive model, Cmd.none )
@@ -38,6 +56,19 @@ update msg model =
 reset : Model.Model -> Model.Model
 reset model =
     { model | dots = Matrix.map (always Model.Dead) model.dots }
+
+
+toggleSpawn : Model.Model -> Model.Model
+toggleSpawn model =
+    { model
+        | spawn =
+            case model.spawn of
+                Model.Swipe ->
+                    Model.Touch
+
+                Model.Touch ->
+                    Model.Swipe
+    }
 
 
 toggleActive : Model.Model -> Model.Model

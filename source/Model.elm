@@ -1,4 +1,4 @@
-module Model exposing (Dot(Alive, Dead), Model, init, neighbors)
+module Model exposing (Dot(Alive, Dead), Model, SpawnMode(Swipe, Touch), init, neighbors)
 
 import Matrix
 import Maybe
@@ -9,8 +9,14 @@ type Dot
     | Dead
 
 
+type SpawnMode
+    = Touch
+    | Swipe
+
+
 type alias Model =
     { active : Bool
+    , spawn : SpawnMode
     , edge : Int
     , dots : Matrix.Matrix Dot
     }
@@ -18,7 +24,9 @@ type alias Model =
 
 init : Int -> Int -> Int -> Model
 init edge width height =
-    Model True
+    Model
+        True
+        Swipe
         edge
         (Matrix.matrix
             (height // edge)

@@ -26,15 +26,28 @@ view board =
             [ Html.button
                 [ Html.Events.onClick Update.ToggleActive ]
                 [ Html.text
-                    (if board.active then
-                        "Pause"
-                     else
-                        "Play"
+                    (case board.active of
+                        False ->
+                            "Paused"
+
+                        True ->
+                            "Playing"
                     )
                 ]
             , Html.button
                 [ Html.Events.onClick Update.Reset ]
                 [ Html.text "Reset" ]
+            , Html.button
+                [ Html.Events.onClick Update.ToggleSpawn ]
+                [ Html.text
+                    (case board.spawn of
+                        Model.Swipe ->
+                            "Swipe"
+
+                        Model.Touch ->
+                            "Touch"
+                    )
+                ]
             ]
         , Svg.svg
             [ Svg.Attributes.width (toString (board.edge * Matrix.colCount board.dots))
@@ -43,7 +56,8 @@ view board =
             (Matrix.mapWithLocation
                 (\( row, col ) dot ->
                     Svg.rect
-                        [ Svg.Events.onMouseOver (Update.Spawn row col)
+                        [ Svg.Events.onMouseOver (Update.DotHover row col)
+                        , Svg.Events.onClick (Update.DotClick row col)
                         , Svg.Attributes.x (toString (board.edge * col))
                         , Svg.Attributes.y (toString (board.edge * row))
                         , Svg.Attributes.width (toString board.edge)
