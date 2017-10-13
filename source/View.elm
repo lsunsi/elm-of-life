@@ -48,6 +48,7 @@ view board =
                             "Touch"
                     )
                 ]
+            , Html.a [ Html.Attributes.href "https://github.com/lsunsi/elm-of-life" ] [ Html.text "Star" ]
             ]
         , Svg.svg
             [ Svg.Attributes.width (toString (board.edge * Matrix.colCount board.dots))
