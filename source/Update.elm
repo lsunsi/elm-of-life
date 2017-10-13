@@ -1,4 +1,4 @@
-module Update exposing (Msg(DotClick, DotHover, Reset, Resize, Tick, ToggleActive, ToggleSpawn), update)
+module Update exposing (Msg(DotClick, DotHover, Reset, Resize, Tick, ToggleActive, ToggleSpawn, Unhighlight), update)
 
 import Matrix
 import Model
@@ -8,6 +8,8 @@ type Msg
     = Resize Int Int
     | DotClick Int Int
     | DotHover Int Int
+    | Highlight Int Int
+    | Unhighlight
     | ToggleActive
     | ToggleSpawn
     | Reset
@@ -33,12 +35,20 @@ update msg model =
             )
 
         DotHover row col ->
-            ( if model.spawn == Model.Swipe then
-                spawn row col model
-              else
-                model
+            ( case model.spawn of
+                Model.Swipe ->
+                    spawn row col model
+
+                Model.Touch ->
+                    highlight row col model
             , Cmd.none
             )
+
+        Highlight row col ->
+            ( highlight row col model, Cmd.none )
+
+        Unhighlight ->
+            ( unhighlight model, Cmd.none )
 
         ToggleSpawn ->
             ( toggleSpawn model, Cmd.none )
@@ -51,6 +61,16 @@ update msg model =
 
         NoOp ->
             ( model, Cmd.none )
+
+
+highlight : Int -> Int -> Model.Model -> Model.Model
+highlight row col model =
+    { model | highlight = Just ( row, col ) }
+
+
+unhighlight : Model.Model -> Model.Model
+unhighlight model =
+    { model | highlight = Nothing }
 
 
 reset : Model.Model -> Model.Model

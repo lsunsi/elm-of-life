@@ -12,7 +12,7 @@ import Update
 
 
 view : Model.Model -> Html.Html Update.Msg
-view board =
+view model =
     Html.div
         [ Html.Attributes.style
             [ ( "height", "100%" )
@@ -26,7 +26,7 @@ view board =
             [ Html.button
                 [ Html.Events.onClick Update.ToggleActive ]
                 [ Html.text
-                    (case board.active of
+                    (case model.active of
                         False ->
                             "Paused"
 
@@ -40,7 +40,7 @@ view board =
             , Html.button
                 [ Html.Events.onClick Update.ToggleSpawn ]
                 [ Html.text
-                    (case board.spawn of
+                    (case model.spawn of
                         Model.Swipe ->
                             "Swipe"
 
@@ -51,18 +51,25 @@ view board =
             , Html.a [ Html.Attributes.href "https://github.com/lsunsi/elm-of-life" ] [ Html.text "Star" ]
             ]
         , Svg.svg
-            [ Svg.Attributes.width (toString (board.edge * Matrix.colCount board.dots))
-            , Svg.Attributes.height (toString (board.edge * Matrix.rowCount board.dots))
+            [ Svg.Attributes.width (toString (model.edge * Matrix.colCount model.dots))
+            , Svg.Attributes.height (toString (model.edge * Matrix.rowCount model.dots))
             ]
             (Matrix.mapWithLocation
                 (\( row, col ) dot ->
                     Svg.rect
                         [ Svg.Events.onMouseOver (Update.DotHover row col)
                         , Svg.Events.onClick (Update.DotClick row col)
-                        , Svg.Attributes.x (toString (board.edge * col))
-                        , Svg.Attributes.y (toString (board.edge * row))
-                        , Svg.Attributes.width (toString board.edge)
-                        , Svg.Attributes.height (toString board.edge)
+                        , Svg.Events.onMouseOut Update.Unhighlight
+                        , Svg.Attributes.x (toString (model.edge * col))
+                        , Svg.Attributes.y (toString (model.edge * row))
+                        , Svg.Attributes.width (toString model.edge)
+                        , Svg.Attributes.height (toString model.edge)
+                        , Svg.Attributes.stroke
+                            (if model.highlight == Just ( row, col ) then
+                                "black"
+                             else
+                                "white"
+                            )
                         , Svg.Attributes.fill
                             (case dot of
                                 Model.Alive ->
@@ -74,7 +81,7 @@ view board =
                         ]
                         [ Svg.text (toString dot) ]
                 )
-                board.dots
+                model.dots
                 |> Matrix.flatten
             )
         ]

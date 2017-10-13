@@ -17,6 +17,7 @@ type SpawnMode
 type alias Model =
     { active : Bool
     , spawn : SpawnMode
+    , highlight : Maybe Matrix.Location
     , edge : Int
     , dots : Matrix.Matrix Dot
     }
@@ -27,6 +28,7 @@ init edge width height =
     Model
         True
         Swipe
+        Nothing
         edge
         (Matrix.matrix
             (height // edge)
