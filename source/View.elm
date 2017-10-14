@@ -11,6 +11,11 @@ import Svg.Events
 import Update
 
 
+pixels : Int -> String
+pixels px =
+    toString px ++ "px"
+
+
 view : Model.Model -> Html.Html Update.Msg
 view model =
     Html.div
@@ -22,34 +27,7 @@ view model =
             , ( "justify-content", "center" )
             ]
         ]
-        [ Html.div []
-            [ Html.button
-                [ Html.Events.onClick Update.ToggleActive ]
-                [ Html.text
-                    (case model.active of
-                        False ->
-                            "Paused"
-
-                        True ->
-                            "Playing"
-                    )
-                ]
-            , Html.button
-                [ Html.Events.onClick Update.Reset ]
-                [ Html.text "Reset" ]
-            , Html.button
-                [ Html.Events.onClick Update.ToggleSpawn ]
-                [ Html.text
-                    (case model.spawn of
-                        Model.Swipe ->
-                            "Swipe"
-
-                        Model.Touch ->
-                            "Touch"
-                    )
-                ]
-            , Html.a [ Html.Attributes.href "https://github.com/lsunsi/elm-of-life" ] [ Html.text "Star" ]
-            ]
+        [ Html.div [] (controls model)
         , Svg.svg
             [ Svg.Attributes.width (toString (model.edge * Matrix.colCount model.dots))
             , Svg.Attributes.height (toString (model.edge * Matrix.rowCount model.dots))
@@ -68,7 +46,7 @@ view model =
                             (if model.highlight == Just ( row, col ) then
                                 "black"
                              else
-                                "white"
+                                "grey"
                             )
                         , Svg.Attributes.fill
                             (case dot of
@@ -85,3 +63,59 @@ view model =
                 |> Matrix.flatten
             )
         ]
+
+
+controls : Model.Model -> List (Html.Html Update.Msg)
+controls model =
+    let
+        edge =
+            pixels (2 * model.edge)
+
+        sharedStyle =
+            [ ( "width", edge )
+            , ( "height", edge )
+            , ( "position", "absolute" )
+            , ( "background-color", "red" )
+            ]
+    in
+    [ Html.div
+        [ Html.Events.onClick Update.ToggleActive
+        , Html.Attributes.style
+            ([ ( "top", "0" ), ( "left", "0" ) ] ++ sharedStyle)
+        ]
+        [ Html.text
+            (case model.active of
+                False ->
+                    "Paused"
+
+                True ->
+                    "Playing"
+            )
+        ]
+    , Html.div
+        [ Html.Events.onClick Update.Reset
+        , Html.Attributes.style
+            ([ ( "bottom", "0" ), ( "left", "0" ) ] ++ sharedStyle)
+        ]
+        [ Html.text "Reset" ]
+    , Html.div
+        [ Html.Events.onClick Update.ToggleSpawn
+        , Html.Attributes.style
+            ([ ( "top", "0" ), ( "right", "0" ) ] ++ sharedStyle)
+        ]
+        [ Html.text
+            (case model.spawn of
+                Model.Swipe ->
+                    "Swipe"
+
+                Model.Touch ->
+                    "Touch"
+            )
+        ]
+    , Html.div
+        [ Html.Attributes.href "https://github.com/lsunsi/elm-of-life"
+        , Html.Attributes.style
+            ([ ( "bottom", "0" ), ( "right", "0" ) ] ++ sharedStyle)
+        ]
+        [ Html.text "Star" ]
+    ]
