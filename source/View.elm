@@ -27,7 +27,10 @@ view model =
             , ( "background-color", "#715f95" )
             ]
         ]
-        [ Html.div
+        [ Html.node "link"
+            [ Html.Attributes.rel "stylesheet", Html.Attributes.href "http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" ]
+            []
+        , Html.div
             [ Html.Attributes.style
                 [ ( "width", pixels (model.edge * Matrix.colCount model.dots) )
                 , ( "height", pixels (model.edge * Matrix.rowCount model.dots) )
@@ -49,21 +52,15 @@ view model =
                             , Svg.Attributes.y (toString (model.edge * row))
                             , Svg.Attributes.width (toString model.edge)
                             , Svg.Attributes.height (toString model.edge)
-                            , Svg.Attributes.stroke
-                                (if model.highlight == Just ( row, col ) then
-                                    "black"
-                                 else
-                                    "none"
-                                )
                             , Svg.Attributes.fill
-                                (case ( dot, Model.neighbors row col model.dots ) of
-                                    ( Model.Alive, _ ) ->
+                                (case ( dot, model.highlight == Just ( row, col ), Model.neighbors row col model.dots ) of
+                                    ( Model.Alive, _, _ ) ->
                                         "#ae91e8"
 
-                                    ( Model.Dead, 0 ) ->
+                                    ( Model.Dead, False, 0 ) ->
                                         "#544d60"
 
-                                    ( Model.Dead, _ ) ->
+                                    ( Model.Dead, _, _ ) ->
                                         "#715f95"
                                 )
                             ]
@@ -82,51 +79,71 @@ controls model =
         edge =
             pixels (2 * model.edge)
 
-        sharedStyle =
+        iconSizeStyle =
+            Html.Attributes.style [ ( "font-size", "50pt" ) ]
+
+        buttonStyle =
             [ ( "width", edge )
             , ( "height", edge )
             , ( "position", "absolute" )
             , ( "background-color", "#fec38f" )
+            , ( "display", "flex" )
+            , ( "align-items", "center" )
+            , ( "justify-content", "center" )
             ]
     in
     [ Html.div
         [ Html.Events.onClick Update.ToggleActive
         , Html.Attributes.style
-            ([ ( "top", "0" ), ( "left", "0" ) ] ++ sharedStyle)
+            ([ ( "top", "0" ), ( "left", "0" ) ] ++ buttonStyle)
         ]
-        [ Html.text
-            (case model.active of
-                False ->
-                    "Paused"
+        [ Html.i
+            [ iconSizeStyle
+            , Html.Attributes.class
+                (case model.active of
+                    False ->
+                        "ion-play"
 
-                True ->
-                    "Playing"
-            )
+                    True ->
+                        "ion-pause"
+                )
+            ]
+            []
         ]
     , Html.div
         [ Html.Events.onClick Update.Reset
         , Html.Attributes.style
-            ([ ( "bottom", "0" ), ( "left", "0" ) ] ++ sharedStyle)
+            ([ ( "bottom", "0" ), ( "left", "0" ) ] ++ buttonStyle)
         ]
-        [ Html.text "Reset" ]
+        [ Html.i
+            [ iconSizeStyle, Html.Attributes.class "ion-ios-refresh" ]
+            []
+        ]
     , Html.div
         [ Html.Events.onClick Update.ToggleSpawn
         , Html.Attributes.style
-            ([ ( "top", "0" ), ( "right", "0" ) ] ++ sharedStyle)
+            ([ ( "top", "0" ), ( "right", "0" ) ] ++ buttonStyle)
         ]
-        [ Html.text
-            (case model.spawn of
-                Model.Swipe ->
-                    "Swipe"
+        [ Html.i
+            [ iconSizeStyle
+            , Html.Attributes.class
+                (case model.spawn of
+                    Model.Swipe ->
+                        "ion-paintbrush"
 
-                Model.Touch ->
-                    "Touch"
-            )
+                    Model.Touch ->
+                        "ion-edit"
+                )
+            ]
+            []
         ]
-    , Html.div
+    , Html.a
         [ Html.Attributes.href "https://github.com/lsunsi/elm-of-life"
         , Html.Attributes.style
-            ([ ( "bottom", "0" ), ( "right", "0" ) ] ++ sharedStyle)
+            ([ ( "bottom", "0" ), ( "right", "0" ) ] ++ buttonStyle)
         ]
-        [ Html.text "Star" ]
+        [ Html.i
+            [ iconSizeStyle, Html.Attributes.class "ion-ios-star" ]
+            []
+        ]
     ]
