@@ -22,46 +22,53 @@ view model =
         [ Html.Attributes.style
             [ ( "height", "100%" )
             , ( "display", "flex" )
-            , ( "flex-direction", "column" )
             , ( "align-items", "center" )
             , ( "justify-content", "center" )
             ]
         ]
-        [ Html.div [] (controls model)
-        , Svg.svg
-            [ Svg.Attributes.width (toString (model.edge * Matrix.colCount model.dots))
-            , Svg.Attributes.height (toString (model.edge * Matrix.rowCount model.dots))
+        [ Html.div
+            [ Html.Attributes.style
+                [ ( "width", pixels (model.edge * Matrix.colCount model.dots) )
+                , ( "height", pixels (model.edge * Matrix.rowCount model.dots) )
+                , ( "position", "relative" )
+                ]
             ]
-            (Matrix.mapWithLocation
-                (\( row, col ) dot ->
-                    Svg.rect
-                        [ Svg.Events.onMouseOver (Update.DotHover row col)
-                        , Svg.Events.onClick (Update.DotClick row col)
-                        , Svg.Events.onMouseOut Update.Unhighlight
-                        , Svg.Attributes.x (toString (model.edge * col))
-                        , Svg.Attributes.y (toString (model.edge * row))
-                        , Svg.Attributes.width (toString model.edge)
-                        , Svg.Attributes.height (toString model.edge)
-                        , Svg.Attributes.stroke
-                            (if model.highlight == Just ( row, col ) then
-                                "black"
-                             else
-                                "grey"
-                            )
-                        , Svg.Attributes.fill
-                            (case dot of
-                                Model.Alive ->
+            [ Html.div [] (controls model)
+            , Svg.svg
+                [ Svg.Attributes.width (toString (model.edge * Matrix.colCount model.dots))
+                , Svg.Attributes.height (toString (model.edge * Matrix.rowCount model.dots))
+                ]
+                (Matrix.mapWithLocation
+                    (\( row, col ) dot ->
+                        Svg.rect
+                            [ Svg.Events.onMouseOver (Update.DotHover row col)
+                            , Svg.Events.onClick (Update.DotClick row col)
+                            , Svg.Events.onMouseOut Update.Unhighlight
+                            , Svg.Attributes.x (toString (model.edge * col))
+                            , Svg.Attributes.y (toString (model.edge * row))
+                            , Svg.Attributes.width (toString model.edge)
+                            , Svg.Attributes.height (toString model.edge)
+                            , Svg.Attributes.stroke
+                                (if model.highlight == Just ( row, col ) then
                                     "black"
+                                 else
+                                    "grey"
+                                )
+                            , Svg.Attributes.fill
+                                (case dot of
+                                    Model.Alive ->
+                                        "black"
 
-                                Model.Dead ->
-                                    "white"
-                            )
-                        ]
-                        [ Svg.text (toString dot) ]
+                                    Model.Dead ->
+                                        "white"
+                                )
+                            ]
+                            [ Svg.text (toString dot) ]
+                    )
+                    model.dots
+                    |> Matrix.flatten
                 )
-                model.dots
-                |> Matrix.flatten
-            )
+            ]
         ]
 
 
