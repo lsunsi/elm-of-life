@@ -16,15 +16,6 @@ pixels px =
     toString px ++ "px"
 
 
-color : Int -> String
-color x =
-    let
-        a =
-            toString (9 - x)
-    in
-    "#" ++ a ++ a ++ a
-
-
 view : Model.Model -> Html.Html Update.Msg
 view model =
     Html.div
@@ -33,6 +24,7 @@ view model =
             , ( "display", "flex" )
             , ( "align-items", "center" )
             , ( "justify-content", "center" )
+            , ( "background-color", "#715f95" )
             ]
         ]
         [ Html.div
@@ -63,7 +55,17 @@ view model =
                                  else
                                     "none"
                                 )
-                            , Svg.Attributes.fill (color (Model.neighbors row col model.dots))
+                            , Svg.Attributes.fill
+                                (case ( dot, Model.neighbors row col model.dots ) of
+                                    ( Model.Alive, _ ) ->
+                                        "#ae91e8"
+
+                                    ( Model.Dead, 0 ) ->
+                                        "#544d60"
+
+                                    ( Model.Dead, _ ) ->
+                                        "#715f95"
+                                )
                             ]
                             [ Svg.text (toString dot) ]
                     )
@@ -84,7 +86,7 @@ controls model =
             [ ( "width", edge )
             , ( "height", edge )
             , ( "position", "absolute" )
-            , ( "background-color", "red" )
+            , ( "background-color", "#fec38f" )
             ]
     in
     [ Html.div
