@@ -16,6 +16,15 @@ pixels px =
     toString px ++ "px"
 
 
+color : Int -> String
+color x =
+    let
+        a =
+            toString (9 - x)
+    in
+    "#" ++ a ++ a ++ a
+
+
 view : Model.Model -> Html.Html Update.Msg
 view model =
     Html.div
@@ -52,16 +61,9 @@ view model =
                                 (if model.highlight == Just ( row, col ) then
                                     "black"
                                  else
-                                    "grey"
+                                    "none"
                                 )
-                            , Svg.Attributes.fill
-                                (case dot of
-                                    Model.Alive ->
-                                        "black"
-
-                                    Model.Dead ->
-                                        "white"
-                                )
+                            , Svg.Attributes.fill (color (Model.neighbors row col model.dots))
                             ]
                             [ Svg.text (toString dot) ]
                     )
